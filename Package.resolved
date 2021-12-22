@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "DNSClient",
+        "repositoryURL": "https://github.com/alessionossa/NioDNS.git",
+        "state": {
+          "branch": null,
+          "revision": "8027e8c310d02312c35236696d9098b1eb74a22b",
+          "version": "2.0.7"
+        }
+      },
+      {
+        "package": "swift-extras-base64",
+        "repositoryURL": "https://github.com/swift-extras/swift-extras-base64.git",
+        "state": {
+          "branch": null,
+          "revision": "97237cf1bc1feebaeb0febec91c1e1b9e4d839b3",
+          "version": "0.7.0"
+        }
+      },
+      {
+        "package": "swift-nio",
+        "repositoryURL": "https://github.com/apple/swift-nio.git",
+        "state": {
+          "branch": null,
+          "revision": "213eb6887e526e0dfac526a2eae559a1893ebbac",
+          "version": "2.36.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
