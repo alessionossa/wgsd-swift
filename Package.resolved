@@ -2,12 +2,12 @@
   "object": {
     "pins": [
       {
-        "package": "DNSClient",
-        "repositoryURL": "https://github.com/alessionossa/NioDNS.git",
+        "package": "DNS",
+        "repositoryURL": "https://github.com/Bouke/DNS.git",
         "state": {
           "branch": null,
-          "revision": "8027e8c310d02312c35236696d9098b1eb74a22b",
-          "version": "2.0.7"
+          "revision": "78bbd1589890a90b202d11d5f9e1297050cf0eb2",
+          "version": "1.2.0"
         }
       },
       {
@@ -20,12 +20,21 @@
         }
       },
       {
-        "package": "swift-nio",
-        "repositoryURL": "https://github.com/apple/swift-nio.git",
+        "package": "Resolver",
+        "repositoryURL": "https://github.com/alessionossa/swift-resolver.git",
         "state": {
           "branch": null,
-          "revision": "213eb6887e526e0dfac526a2eae559a1893ebbac",
-          "version": "2.36.0"
+          "revision": "4d387e100ae83978ce436825188c907e4198f4d9",
+          "version": "0.4.0"
+        }
+      },
+      {
+        "package": "UniSocket",
+        "repositoryURL": "https://github.com/seznam/swift-unisocket",
+        "state": {
+          "branch": null,
+          "revision": "1785e432fb8497265a38712cdb9584c429ca3f96",
+          "version": "0.14.0"
         }
       }
     ]

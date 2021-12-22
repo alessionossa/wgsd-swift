@@ -13,7 +13,7 @@ let package = Package(
             targets: ["wgsd-swift"]),
     ],
     dependencies: [
-        .package(name: "DNSClient", url: "https://github.com/alessionossa/NioDNS.git", from: "2.0.7"),
+        .package(name: "Resolver", url: "https://github.com/alessionossa/swift-resolver.git", from: "0.4.0"),
         .package(url: "https://github.com/swift-extras/swift-extras-base64.git", from: "0.7.0"),
     ],
     targets: [
@@ -21,7 +21,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "wgsd-swift",
-            dependencies: [.byName(name: "DNSClient"),
+            dependencies: [.product(name: "Resolver", package: "Resolver"),
                            .product(name: "ExtrasBase64", package: "swift-extras-base64"),
                           ]
         ),
