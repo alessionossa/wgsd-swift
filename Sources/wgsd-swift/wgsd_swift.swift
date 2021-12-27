@@ -12,18 +12,22 @@ public struct wgsd_swift {
     ///   - port: WGSD Server port
     ///   - dnsZone: Custom DNS zone, it must be the same of the one set on server
     ///   - peersPubKey: Array of Base64 encoded public keys of peers you want to request endpoint informations
-    static public func queryServer(dnsServer: String, port: UInt16, dnsZone: String, peersPubKey: [String], closure: @escaping ([String: Endpoint]) -> ()) {
+    static public func queryServer(dnsServer: String, port: UInt16, dnsZone: String, peersPubKey: [String], closure: @escaping ([String: String]) -> ()) {
         
-        var endpoints = [String: Endpoint]()
+        var endpoints = [String: String]()
         
-        let resolver = Resolver(nameserver: ["\(dnsServer):\(port)"])
+        let dnsServerString = "\(dnsServer):\(port.description)"
+        let resolver = Resolver(nameserver: [dnsServerString])
+        print("DNS server is: \(dnsServerString)")
         
         for peerPubKey in peersPubKey {
             
             do {
-                let base32Key = try wgsd_swift.base32Encoded(from: peerPubKey)
+                let base32Key = try wgsd_swift.base32Encoded(from: peerPubKey).lowercased()
                 
                 let completeZone = base32Key + "._wireguard._udp." + dnsZone
+                
+                // print("Querying for \(completeZone)")
                 
                 let result = try resolver.discover(completeZone)
                 
@@ -31,7 +35,7 @@ public struct wgsd_swift {
                     let address = response.address
                     
                     if let port = response.port {
-                        endpoints[peerPubKey] = (address, UInt16(port))
+                        endpoints[peerPubKey] = "\(address):\(UInt16(port))"
                     } else {
                         print("Missing port information for \(peerPubKey)")
                     }
