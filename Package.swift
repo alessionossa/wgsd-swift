@@ -13,8 +13,8 @@ let package = Package(
             targets: ["wgsd-swift"]),
     ],
     dependencies: [
-        .package(name: "DNSClient", url: "https://github.com/alessionossa/NioDNS.git", from: "2.0.7"),
-        .package(url: "https://github.com/swift-extras/swift-extras-base64.git", from: "0.7.0"),
+        .package(name: "DNSClient", url: "https://github.com/alessionossa/NioDNS.git", from: "2.1.0"),
+        .package(url: "https://github.com/swift-extras/swift-extras-base64.git", from: "0.7.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -22,8 +22,7 @@ let package = Package(
         .target(
             name: "wgsd-swift",
             dependencies: [.byName(name: "DNSClient"),
-                           .product(name: "ExtrasBase64", package: "swift-extras-base64"),
-                          ]
+                           .product(name: "ExtrasBase64", package: "swift-extras-base64")]
         ),
         .testTarget(
             name: "wgsd-swiftTests",
