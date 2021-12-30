@@ -1,12 +1,10 @@
 import DNSClient
 import NIO
 import ExtrasBase64
-import NIOPosix
 
 public class WGSDClient {
     
     public typealias Endpoint = (String, UInt16)
-    
     
     private var loopGroup: MultiThreadedEventLoopGroup
     private var dnsClient: DNSClient
