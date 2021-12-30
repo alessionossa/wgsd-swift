@@ -4,7 +4,7 @@ import ExtrasBase64
 
 public class WGSDClient {
     
-    public typealias Endpoint = (String, UInt16)
+    public typealias WGSDQueryResult = Result<[String: String],Error>
     
     private var loopGroup: MultiThreadedEventLoopGroup
     private var dnsClient: DNSClient
@@ -22,7 +22,7 @@ public class WGSDClient {
     ///   - port: WGSD Server port
     ///   - dnsZone: Custom DNS zone, it must be the same of the one set on server
     ///   - peersPubKey: Array of Base64 encoded public keys of peers you want to request endpoint informations
-    public func queryServer(dnsZone: String, peersPubKey: [String], closure: @escaping ([String: String]) -> ()) {
+    public func queryServer(dnsZone: String, peersPubKey: [String], closure: @escaping (WGSDQueryResult) -> ()) {
         
         var futures: [EventLoopFuture<Message>] = []
         
@@ -64,11 +64,12 @@ public class WGSDClient {
             }
 
             resp.whenSuccess { records in
-                closure(records)
+                closure(.success(records))
             }
 
             resp.whenFailure({ error in
                 print("Error: \(error)")
+                closure(.failure(error))
             })
             
             /*
