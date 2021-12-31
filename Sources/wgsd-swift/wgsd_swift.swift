@@ -60,7 +60,7 @@ public class WGSDClient {
                       let peerKey = try? WGSDClient.base64Encoded(from: peerKey32)
                 else { return }
                 
-                endpointsStorage[peerKey] = "\(stringAddress):\(port))"
+                endpointsStorage[peerKey] = "\(stringAddress):\(port)"
             }
 
             resp.whenSuccess { records in
