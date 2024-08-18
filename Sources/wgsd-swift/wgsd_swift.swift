@@ -86,31 +86,14 @@ public class WGSDClient {
     
     private static func base32Encoded(from base64String: String) throws -> String {
         let keyBytes = try Base64.decode(string: base64String)
-        var base32Key = Base32.encodeString(bytes: keyBytes)
-        
-        // Manually add padding until https://github.com/swift-extras/swift-extras-base64/issues/30 is fixed
-        let padding: String
-        switch base32Key.count % 8 {
-            case 2:
-                padding = "======"
-            case 4:
-                padding = "===="
-            case 5:
-                padding = "==="
-            case 7:
-                padding = "=="
-            default:
-                padding = ""
-        }
-        base32Key = base32Key + padding
+        let base32Key = Base32.encodeToString(bytes: keyBytes)
         
         return base32Key
     }
     
     private static func base64Encoded(from base32String: String) throws -> String {
-        let noPaddingBase32String = base32String.trimmingCharacters(in: ["="])
-        let keyBytes = try Base32.decode(string: noPaddingBase32String)
-        let base64Key = Base64.encodeString(bytes: keyBytes)
+        let keyBytes = try Base32.decode(string: base32String)
+        let base64Key = Base64.encodeToString(bytes: keyBytes)
         
         return base64Key
     }
