@@ -1,19 +1,18 @@
-import DNSClient
-import NIO
 import ExtrasBase64
+import AsyncDNSResolver
 
 public class WGSDClient {
     
     public typealias WGSDQueryResult = Result<[String: String],Error>
     
-    private var loopGroup: MultiThreadedEventLoopGroup
-    private var dnsClient: DNSClient
+    private let resolver: AsyncDNSResolver
     
-    public init(ipAddress: String, port: Int) throws {
-        let serverSocketAddress = try SocketAddress(ipAddress: ipAddress, port: port)
-        
-        loopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-        dnsClient = try DNSClient.connect(on: loopGroup, config: [serverSocketAddress]).wait()
+    public init(ipAddress: String, port: UInt16) throws {
+        var options = CAresDNSResolver.Options.default
+        options.servers = [ipAddress]
+        options.tcpPort = port
+        options.udpPort = port
+        resolver = try AsyncDNSResolver(options: options)
     }
     
     /// Query the DNS server to get informations about endpoints identified by public keys in `peersPubKey`.
@@ -22,65 +21,49 @@ public class WGSDClient {
     ///   - port: WGSD Server port
     ///   - dnsZone: Custom DNS zone, it must be the same of the one set on server
     ///   - peersPubKey: Array of Base64 encoded public keys of peers you want to request endpoint informations
+    @available(*, renamed: "queryServer(dnsZone:peersPubKey:)")
     public func queryServer(dnsZone: String, peersPubKey: [String], closure: @escaping (WGSDQueryResult) -> ()) {
+        Task {
+            do {
+                let result = try await queryServer(dnsZone: dnsZone, peersPubKey: peersPubKey)
+                closure(.success(result))
+            } catch {
+                closure(.failure(error))
+            }
+        }
+    }
+    
+    
+    public func queryServer(dnsZone: String, peersPubKey: [String]) async throws -> [String : String] {
         
-        var futures: [EventLoopFuture<Message>] = []
-        
-        do {
-            for peerPubKey in peersPubKey {
-                // let loop = loopGroup.next()
-                
+        var endpoints = [String: String]()
+        for peerPubKey in peersPubKey {
+            
+            do {
                 let base32Key = try WGSDClient.base32Encoded(from: peerPubKey).lowercased()
                 
                 let completeZone = base32Key + "._wireguard._udp." + dnsZone
                 
-                let recordsFuture = dnsClient.sendQuery(forHost: completeZone, type: .srv, additionalOptions: nil)
+                let resultSRV = try await resolver.querySRV(name: completeZone)
                 
-                futures.append(recordsFuture)
-            }
-            
-            let emptyEndpoints = [String: String]()
-            let resp = EventLoopFuture.reduce(into: emptyEndpoints, futures, on: loopGroup.next()) { endpointsStorage, newMessage in
-                let answer = newMessage.answers.first
+                // AsyncDNSResolver (c-ares) does not support "additionional records" in DNS response,
+                // so we query manually for A records
+                let resultA = try await resolver.queryA(name: completeZone)
                 
-                guard case .srv(let srvRecord) = answer else { return }
-                let port = srvRecord.resource.port
+                guard let port = resultSRV.first?.port,
+                      let stringAddress = resultA.first?.address.address
+                else { continue }
                 
-                var stringAddress: String = ""
-                for additionalAnswer in newMessage.additionalData {
-                    guard case .a(let aRecord) = additionalAnswer else { continue }
-
-                    stringAddress = aRecord.resource.stringAddress
-                }
-                guard !stringAddress.isEmpty else { return }
-                
-                guard let questionLabels = newMessage.questions.first?.labels,
-                      let bytes = questionLabels.first?.label,
-                      let peerKey32 = String(bytes: bytes, encoding: .utf8),
-                      let peerKey = try? WGSDClient.base64Encoded(from: peerKey32)
-                else { return }
-                
-                endpointsStorage[peerKey] = "\(stringAddress):\(port)"
-            }
-
-            resp.whenSuccess { records in
-                closure(.success(records))
-            }
-
-            resp.whenFailure({ error in
+                endpoints[peerPubKey] = "\(stringAddress):\(port)"
+            } catch let error as AsyncDNSResolver.Error where (error.source as? CAresError) == CAresError(code: 4) {
+                print("Record not found")
+            } catch {
                 print("Error: \(error)")
-                closure(.failure(error))
-            })
-            
-            /*
-            resp.whenComplete { _ in
-                try! self.loopGroup.syncShutdownGracefully()
+                throw error
             }
-             */
-        } catch {
-            print("Error: \(error)")
         }
 
+        return endpoints
     }
     
     

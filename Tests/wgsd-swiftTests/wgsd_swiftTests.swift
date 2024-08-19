@@ -1,7 +1,5 @@
 import XCTest
 @testable import wgsd_swift
-import NIO
-import DNSClient
 
 final class wgsd_swiftTests: XCTestCase {
     
