@@ -47,7 +47,11 @@ public class WGSDClient {
                 }
                 guard !stringAddress.isEmpty else { return }
                 
-                endpoints[peerPubKey] = "\(stringAddress):\(port)"
+                guard let peerKey32 = result.questions.first?.name.components(separatedBy: ".").first,
+                      let peerKey = try? WGSDClient.base64Encoded(from: peerKey32)
+                else { return }
+                
+                endpoints[peerKey] = "\(stringAddress):\(port)"
             } catch let error {
                 print("Error with \(peerPubKey)")
                 print(error.localizedDescription)
