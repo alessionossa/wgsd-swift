@@ -15,17 +15,17 @@
         "repositoryURL": "https://github.com/swift-extras/swift-extras-base64.git",
         "state": {
           "branch": null,
-          "revision": "97237cf1bc1feebaeb0febec91c1e1b9e4d839b3",
-          "version": "0.7.0"
+          "revision": "dc8121fdd2b444c97d6b0534e8ad4ddecbe0d5f4",
+          "version": "1.0.0"
         }
       },
       {
         "package": "Resolver",
         "repositoryURL": "https://github.com/alessionossa/swift-resolver.git",
         "state": {
-          "branch": null,
-          "revision": "4d387e100ae83978ce436825188c907e4198f4d9",
-          "version": "0.4.0"
+          "branch": "dev",
+          "revision": "693f67dd10d59c390656a8bd578c35a40403ca65",
+          "version": null
         }
       },
       {

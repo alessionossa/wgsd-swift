@@ -6,10 +6,11 @@ final class wgsd_swiftTests: XCTestCase {
         
         let expectation = self.expectation(description: "Query 1")
         
-        wgsd_swift.queryServer(dnsServer: "164.90.235.103",
-                               port: 5356,
-                               dnsZone: "exampleniodns.org.",
-                               peersPubKey: ["F9dNYWfLLMYBwNXMgnmoOW8W66WNwUogr+rvWaTW4gU="]
+        let client = try WGSDClient.init(ipAddress: "164.90.235.103", port: 5356)
+
+        client.queryServer(
+            dnsZone: "exampleniodns.org.",
+            peersPubKey: ["F9dNYWfLLMYBwNXMgnmoOW8W66WNwUogr+rvWaTW4gU="]
         ){ endpoints in
             print("Got the results:")
             print(endpoints)
