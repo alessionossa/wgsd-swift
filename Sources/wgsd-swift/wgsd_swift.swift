@@ -18,10 +18,9 @@ public class WGSDClient {
     
     /// Query the DNS server to get informations about endpoints identified by public keys in `peersPubKey`.
     /// - Parameters:
-    ///   - dnsServer: IP address of server with WGSD
-    ///   - port: WGSD Server port
     ///   - dnsZone: Custom DNS zone, it must be the same of the one set on server
     ///   - peersPubKey: Array of Base64 encoded public keys of peers you want to request endpoint informations
+    ///   - closure: Result of the query
     public func queryServer(dnsZone: String, peersPubKey: [String], closure: @escaping (WGSDQueryResult) -> ()) {
         
         var futures: [EventLoopFuture<Message>] = []
