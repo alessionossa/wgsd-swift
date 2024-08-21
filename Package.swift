@@ -13,7 +13,7 @@ let package = Package(
             targets: ["wgsd-swift"]),
     ],
     dependencies: [
-        .package(name: "DNSClient", url: "https://github.com/alessionossa/NioDNS.git", from: "2.1.0"),
+        .package(url: "https://github.com/orlandos-nl/DNSClient.git", from: "2.4.0"),
         .package(url: "https://github.com/swift-extras/swift-extras-base64.git", from: "1.0.0")
     ],
     targets: [
